@@ -170,18 +170,21 @@ Processing time: **1.042649745941162 seconds**
 
 == Physical Plan ==
 AdaptiveSparkPlan isFinalPlan=false
-+- Project [question_id#298L, creation_date#300, title#301, month#314, cnt#330L]
-   +- BroadcastHashJoin [question_id#298L], [question_id#286L], Inner, BuildRight, false
-      :- Filter isnotnull(question_id#298L)
-      :  +- FileScan parquet [question_id#298L,creation_date#300,title#301] Batched: true, DataFilters: [isnotnull(question_id#298L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/raniabadr/data/questions], PartitionFilters: [], PushedFilters: [IsNotNull(question_id)], ReadSchema: struct<question_id:bigint,creation_date:timestamp,title:string>
-      +- BroadcastExchange HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [id=#729]
-         +- HashAggregate(keys=[question_id#286L, month#314], functions=[count(1)])
-            +- HashAggregate(keys=[question_id#286L, month#314], functions=[partial_count(1)])
-               +- Exchange hashpartitioning(month#314, 200), REPARTITION_BY_COL, [id=#721]
-                  +- Project [question_id#286L, month(cast(creation_date#288 as date)) AS month#314]
-                     +- Filter isnotnull(question_id#286L)
-                        +- FileScan parquet [question_id#286L,creation_date#288] Batched: true, DataFilters: [isnotnull(question_id#286L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/raniabadr/data/answers], PartitionFilters: [], PushedFilters: [IsNotNull(question_id)], ReadSchema: struct<question_id:bigint,creation_date:timestamp>
-                        
-                        
++- Project [question_id#2139L, creation_date#2153, title#2154, month#2167, cnt#2183L]
+   +- BroadcastHashJoin [question_id#2139L], [question_id#2151L], Inner, BuildRight, false
+      :- HashAggregate(keys=[question_id#2139L, month#2167], functions=[count(1)])
+      :  +- HashAggregate(keys=[question_id#2139L, month#2167], functions=[partial_count(1)])
+      :     +- Exchange hashpartitioning(month#2167, 200), REPARTITION_BY_COL, [id=#3713]
+      :        +- Project [question_id#2139L, month(cast(creation_date#2141 as date)) AS month#2167]
+      :           +- Filter isnotnull(question_id#2139L)
+      :              +- FileScan parquet [question_id#2139L,creation_date#2141] Batched: true, DataFilters: [isnotnull(question_id#2139L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/raniabadr/data/answers], PartitionFilters: [], PushedFilters: [IsNotNull(question_id)], ReadSchema: struct<question_id:bigint,creation_date:timestamp>
+      +- BroadcastExchange HashedRelationBroadcastMode(List(input[0, bigint, true]),false), [id=#3722]
+         +- Project [question_id#2151L, creation_date#2153, title#2154]
+            +- Filter (isnotnull(accepted_answer_id#2155L) AND isnotnull(question_id#2151L))
+               +- FileScan parquet [question_id#2151L,creation_date#2153,title#2154,accepted_answer_id#2155L] Batched: true, DataFilters: [isnotnull(accepted_answer_id#2155L), isnotnull(question_id#2151L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/Users/raniabadr/data/questions], PartitionFilters: [], PushedFilters: [IsNotNull(accepted_answer_id), IsNotNull(question_id)], ReadSchema: struct<question_id:bigint,creation_date:timestamp,title:string,accepted_answer_id:bigint>
+
+# Broadcast + repartition
+![broadcast+repartition](https://user-images.githubusercontent.com/83798130/166080996-4b90f832-1af8-497c-9f24-973aac3a4937.jpg)
+
 # conclusion
-the best performance is coming fron repartition month 
+the best performance is repartition month 
