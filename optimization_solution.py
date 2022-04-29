@@ -23,9 +23,9 @@ answersDF = spark.read.option('path', answers_input_path).load()
 
 questionsDF = spark.read.option('path', questions_input_path).load()
 
-answers_month = answersDF.withColumn('month', month('creation_date')).groupBy('question_id', 'month').agg(count('*').alias('cnt'))
+answers_month = answersDF.withColumn('month', month('creation_date')).repartition(col('month')).groupBy('question_id', 'month').agg(count('*').alias('cnt'))
 
-resultDF_2 = questionsDF.join(broadcast(answers_month), "question_id").select('question_id', 'creation_date', 'title', 'month', 'cnt')
+resultDF_2 = questionsDF.join(answers_month, "question_id").select('question_id', 'creation_date', 'title', 'month', 'cnt')
 resultDF.orderBy('question_id', 'month').show()
 
 print("Processing time: %s seconds" % (time.time() - time1))
