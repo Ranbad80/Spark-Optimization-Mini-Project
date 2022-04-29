@@ -1,6 +1,8 @@
 # Spark-Optimization-Mini-Project
 Optimize Existing Code
 
+# add spark.conf.set("spark.sql.adaptive.enabled", "true")
+
 # original Query 
 
 ![original](https://user-images.githubusercontent.com/83798130/166071710-daec3021-4a5b-4f2e-b5a1-07294c4091de.jpg)
